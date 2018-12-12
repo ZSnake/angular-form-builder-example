@@ -1,0 +1,21 @@
+#app {
+  font-family: 'Roboto', sans-serif;
+}
+
+.json-show {
+  text-align: left;
+  min-width: 30%;
+  margin: 5px;
+  padding: 5px;
+}
+
+.json-container{
+  display: flex;
+  justify-content: center;
+}
+
+.codebox {
+  background-color: #e5e5e5;
+  border: 1px solid black;
+  min-height: 300px;
+}
