@@ -35,7 +35,6 @@ export class AppComponent implements OnInit {
       helpText: 'Select Org Identifier',
       columnOrder: '1',
       rowOrder: '1',
-      regexPattern: '',
       validationMsg: 'Select valid Org Identifier',
       attrData: [
         {
@@ -70,7 +69,7 @@ export class AppComponent implements OnInit {
         helpText: 'Enter BID(s)',
         columnOrder: '1',
         rowOrder: '1',
-        regexPattern: '(([EHRSXehsrx9]{1}[0-9]{4}),[ ]*)*([EHRSXehsrx9]{1}[0-9]{4})',
+        regexPattern: 'abcd',
         validationMsg: 'Enter information in valid fomat',
         attrData: []
       },
@@ -82,6 +81,16 @@ export class AppComponent implements OnInit {
         uiType: 'NUMBER',
         dynamicattr: 'bid',
         type: '',
+        attrData: []
+      },
+      {
+        name: 'phone',
+        group: '',
+        displayLabel: 'Phone number',
+        description: 'Bundles Identification',
+        required: '1',
+        regexPattern: 'abc',
+        uiType: 'TEXTBOX',
         attrData: []
       },
       {
@@ -109,6 +118,7 @@ export class AppComponent implements OnInit {
     schema: {
       type: 'object',
       properties: {},
+      required: [],
     },
     form: [],
   };
@@ -133,6 +143,22 @@ export class AppComponent implements OnInit {
         title: attribute.displayLabel,
         type: this.getSchemaDefinitionInputType(attribute.uiType),
       };
+      /* Every time an attribute has required set to 1, it'll be added to a "required" variable list
+        If the required element is not filled, the user can't submit the form
+      */
+
+      /* If the attribute is required we add it to a required list withing our form schema
+      Whenever an input that's required is not filled, the form' wont let the user submit */
+      if (attribute.required === '1') {
+        this.formConfig.schema.required.push(attribute.name);
+      }
+
+      /* If the regexPattern exist within the attribute, we add a pattern to the  input. Whenever
+      an input with a pattern doesn't match the pattern the  form won't let the user submit */
+      if (attribute.regexPattern) {
+        this.formConfig.schema.properties[attribute.name].pattern = attribute.regexPattern;
+        this.formConfig.schema.properties[attribute.name].validationMessage = attribute.validationMsg || 'Error';
+      }
       /* If the input is a select, radiobutton or checkbox we'll also need to add a
       "form" controller to our json. Form controllers are meant to configure more complicated
       field types  and groups */
@@ -175,8 +201,6 @@ export class AppComponent implements OnInit {
         inputController.type = this.getFormControllerType(attribute.uiType);
         this.formConfig.form.push(inputController);
       } else {
-        /* If it's a regular input,  we just need to add the key to the forms. In our case
-        the key is the attribute name */
         this.formConfig.form.push(attribute.name);
       }
     });
